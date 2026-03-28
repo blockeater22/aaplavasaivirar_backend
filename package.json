@@ -1,0 +1,48 @@
+{
+  "name": "aaplavasaivirar-backend",
+  "version": "0.1.0",
+  "description": "VVMC Hyper-local Platform API — AaplaVasaiVirar",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "migrate": "node scripts/run-migrations.js",
+    "db:clear": "node scripts/clear-db.js",
+    "test": "node --test tests/",
+    "test:e2e": "NODE_ENV=test node --test tests/e2e/",
+    "load-test": "NODE_ENV=test node scripts/load-test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "vvmc",
+    "hyperlocal",
+    "vasai-virar",
+    "postgis"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@imagekit/nodejs": "^7.3.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-validator": "^7.2.0",
+    "form-data": "^4.0.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
+    "pg": "^8.13.0",
+    "postgres": "^3.4.8",
+    "serverless-http": "^3.2.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "autocannon": "^7.14.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.0.0"
+  }
+}
