@@ -36,6 +36,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'aaplavasaivirar-backend' });
 });
 
+/** No DB — use to verify Vercel routes to Express (vs stuck handler / 504). */
+app.get('/ping', (req, res) => {
+  res.json({ pong: true });
+});
+
 app.use('/auth', authRoutes);
 app.use('/shops', shopsRoutes);
 app.use('/volunteers', volunteersRoutes);

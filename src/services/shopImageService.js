@@ -1,14 +1,17 @@
 /**
  * Shop images: normalize with Sharp (max 1200px WebP ~0.7) and upload to ImageKit.
  * Client usually sends pre-compressed WebP; server ensures caps + consistent format for ImageKit dynamic delivery.
+ *
+ * Sharp is loaded lazily — static import pulls a heavy native binary and can stall or timeout
+ * Vercel serverless cold starts for routes that never touch images.
  */
-import sharp from 'sharp';
 import { uploadImage } from './imagekitService.js';
 
 const MAX_WIDTH = 1200;
 const WEBP_QUALITY = 72;
 
 async function normalizeListingBuffer(buffer) {
+  const { default: sharp } = await import('sharp');
   return sharp(buffer)
     .resize(MAX_WIDTH, null, { withoutEnlargement: true })
     .webp({ quality: WEBP_QUALITY })

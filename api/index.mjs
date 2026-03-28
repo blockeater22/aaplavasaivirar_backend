@@ -1,9 +1,10 @@
 /**
- * Vercel serverless entry for the full Express app. Rewrites send non-/api/* paths here;
- * Node may see req.url as /api/index — restore the client path from Vercel headers so
- * routes like /buildings match.
+ * Vercel serverless entry for the full Express app. Rewrites send non-/api/* paths here.
+ *
+ * Do **not** use `serverless-http` here: it assumes AWS Lambda `(event, context)` and will
+ * not drive Node `IncomingMessage` / `ServerResponse` correctly on Vercel — requests can hang
+ * with no bytes sent. Express `app` is a standard `(req, res, next)` handler; call it directly.
  */
-import serverless from 'serverless-http';
 import app from '../src/expressApp.js';
 
 function restoreClientPath(req) {
@@ -48,9 +49,8 @@ function restoreClientPath(req) {
   req.url = pathname + qs;
 }
 
-const handler = serverless(app);
-
 export default function vercelHandler(req, res) {
   restoreClientPath(req);
-  return handler(req, res);
+  req.originalUrl = req.url;
+  app(req, res);
 }
