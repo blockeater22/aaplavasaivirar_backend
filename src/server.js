@@ -1,68 +1,14 @@
 /**
- * AaplaVasaiVirar Backend — VVMC Hyper-local Platform
+ * Local / non-serverless entry — binds HTTP port (Vercel uses api/index.mjs instead).
  */
 import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import app from './expressApp.js';
 import pool, { ensurePostGIS } from './config/db.js';
 import { isConfigured as imagekitConfigured } from './services/imagekitService.js';
 import { provider as smsProvider, apiKey as smsApiKey, senderId as smsSenderId } from './config/sms.js';
 
-import authRoutes from './routes/auth.js';
-import shopsRoutes from './routes/shops.js';
-import volunteersRoutes from './routes/volunteers.js';
-import leaderboardRoutes from './routes/leaderboard.js';
-import adminRoutes from './routes/admin.js';
-import sessionsRoutes from './routes/sessions.js';
-import buildingsRoutes from './routes/buildings.js';
-import eventsRoutes from './routes/events.js';
-import plansRoutes from './routes/plans.js';
-import subscriptionsRoutes from './routes/subscriptions.js';
-import usersRoutes from './routes/users.js';
-import servicesRoutes from './routes/services.js';
-import leadsRoutes from './routes/leads.js';
-import propertyAdsRoutes from './routes/propertyAds.js';
-import reportsRoutes from './routes/reports.js';
-import categoriesRoutes from './routes/categories.js';
-import whitelistRoutes from './routes/whitelist.js';
-
-const app = express();
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || '';
-
-app.use(helmet());
-app.use(cors());
-if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
-app.use(express.json());
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'aaplavasaivirar-backend' });
-});
-
-app.use('/auth', authRoutes);
-app.use('/shops', shopsRoutes);
-app.use('/volunteers', volunteersRoutes);
-app.use('/leaderboard', leaderboardRoutes);
-app.use('/admin', adminRoutes);
-app.use('/sessions', sessionsRoutes);
-app.use('/buildings', buildingsRoutes);
-app.use('/events', eventsRoutes);
-app.use('/plans', plansRoutes);
-app.use('/subscriptions', subscriptionsRoutes);
-app.use('/users', usersRoutes);
-app.use('/services', servicesRoutes);
-app.use('/leads', leadsRoutes);
-app.use('/property-ads', propertyAdsRoutes);
-app.use('/reports', reportsRoutes);
-app.use('/categories', categoriesRoutes);
-app.use('/whitelist', whitelistRoutes);
-
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: err.message || 'Internal server error' });
-});
 
 async function logServiceStatusAndStart() {
   const lines = [];
@@ -90,7 +36,6 @@ async function logServiceStatusAndStart() {
     lines.push(`[Postgres] ${pgVersion}`);
     lines.push('[PostGIS] extension check ok');
 
-    // Log all user tables visible in this DB so it's clear what DATABASE_URL points to.
     const { rows: tableRows } = await pool.query(
       `SELECT table_schema, table_name
        FROM information_schema.tables
@@ -120,13 +65,9 @@ async function logServiceStatusAndStart() {
   });
 }
 
-// Vercel runs the app as a serverless function (see api/index.mjs); do not bind a port here.
-const isVercel = Boolean(process.env.VERCEL);
-if (process.env.NODE_ENV !== 'test' && !isVercel) {
+if (process.env.NODE_ENV !== 'test') {
   logServiceStatusAndStart().catch((err) => {
     console.error('[Startup] fatal:', err);
     process.exit(1);
   });
 }
-
-export default app;

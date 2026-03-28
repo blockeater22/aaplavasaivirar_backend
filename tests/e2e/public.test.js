@@ -6,7 +6,7 @@ import assert from 'node:assert';
 import request from 'supertest';
 
 process.env.NODE_ENV = 'test';
-const app = (await import('../../src/app.js')).default;
+const app = (await import('../../src/expressApp.js')).default;
 
 describe('Public APIs', () => {
   describe('GET /shops/nearby', () => {

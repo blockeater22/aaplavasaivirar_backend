@@ -20,7 +20,7 @@ import { getTestVolunteerToken } from './helpers.js';
 import 'dotenv/config';
 
 process.env.NODE_ENV = 'test';
-const app = (await import('../../src/app.js')).default;
+const app = (await import('../../src/expressApp.js')).default;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const tmpDir = path.join(__dirname, '.tmp');

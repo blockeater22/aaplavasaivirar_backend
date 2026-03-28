@@ -7,7 +7,7 @@ import assert from 'node:assert';
 import request from 'supertest';
 
 process.env.NODE_ENV = 'test';
-const app = (await import('../../src/app.js')).default;
+const app = (await import('../../src/expressApp.js')).default;
 
 describe('Health', () => {
   it('GET /health returns 200 and status ok', async () => {

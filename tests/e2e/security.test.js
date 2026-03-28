@@ -7,7 +7,7 @@ import request from 'supertest';
 import { signToken } from '../../src/middleware/auth.js';
 
 process.env.NODE_ENV = 'test';
-const app = (await import('../../src/app.js')).default;
+const app = (await import('../../src/expressApp.js')).default;
 
 describe('Security', () => {
   describe('Protected routes require valid volunteer token', () => {

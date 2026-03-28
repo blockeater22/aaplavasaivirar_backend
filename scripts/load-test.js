@@ -51,7 +51,7 @@ function printResult(label, result) {
 }
 
 async function main() {
-  const app = (await import(join(__dirname, '..', 'src', 'app.js'))).default;
+  const app = (await import(join(__dirname, '..', 'src', 'expressApp.js'))).default;
   const server = http.createServer(app);
 
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));

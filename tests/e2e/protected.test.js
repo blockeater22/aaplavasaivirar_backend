@@ -8,7 +8,7 @@ import request from 'supertest';
 import { getTestVolunteerToken } from './helpers.js';
 
 process.env.NODE_ENV = 'test';
-const app = (await import('../../src/app.js')).default;
+const app = (await import('../../src/expressApp.js')).default;
 
 describe('Protected APIs (volunteer)', () => {
   let token;
