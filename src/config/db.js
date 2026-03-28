@@ -38,11 +38,15 @@ function normalizeDatabaseUrl(input) {
 const connectionString = normalizeDatabaseUrl(effectiveConnectionString);
 
 // `postgres` handles pool internally. Serverless (Vercel): keep pool small to avoid exhausting DB connections.
-const poolMax = process.env.VERCEL ? 2 : 10;
+const isVercel = Boolean(process.env.VERCEL);
+const poolMax = isVercel ? 2 : 10;
+// Vercel Hobby hard-caps serverless at 10s unless you raise maxDuration (Pro). A 30s connect_timeout
+// lets the DB socket outlive the function → opaque 504. Use a short timeout + prepare:false for PgBouncer.
 const sql = postgres(connectionString, {
   max: poolMax,
-  idle_timeout: 30,
-  connect_timeout: 30,
+  idle_timeout: isVercel ? 20 : 30,
+  connect_timeout: isVercel ? 8 : 30,
+  ...(isVercel ? { prepare: false } : {}),
 });
 
 const pool = {
